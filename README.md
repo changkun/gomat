@@ -1,2 +1,7 @@
 # gommult
-Matrix multiplication with blocking/tiling technique in Go.
+
+Parallel tiling matrix multiplication package in Go.
+
+## License
+
+MIT &copy; [changkun](https://changkun.de)
