@@ -142,10 +142,6 @@ type NaiveMult func(B, C *Matrix) error
 type BlockMult func(bsize int, B, C *Matrix) error
 
 func TestMatrix_MultNaive(t *testing.T) {
-	type fields struct {
-		N    int
-		data [][]float64
-	}
 	type args struct {
 		B *Matrix
 		C *Matrix
@@ -235,10 +231,6 @@ func TestMatrix_MultNaive(t *testing.T) {
 }
 
 func TestMatrix_MultBlock(t *testing.T) {
-	type fields struct {
-		N    int
-		data [][]float64
-	}
 	type args struct {
 		blockSize int
 		B         *Matrix
@@ -260,7 +252,6 @@ func TestMatrix_MultBlock(t *testing.T) {
 	tests := []struct {
 		name    string
 		f       BlockMult
-		fields  fields
 		args    args
 		wantErr bool
 		truth   *Matrix
@@ -528,7 +519,9 @@ func BenchmarkMatrix_MultNaive(b *testing.B) {
 	for _, tt := range tests {
 		b.Run(tt.name, func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
-				tt.f(B, C)
+				if err := tt.f(B, C); err != nil {
+					b.Errorf("%s() error %v, want nil", tt.name, err)
+				}
 			}
 		})
 	}
