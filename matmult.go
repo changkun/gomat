@@ -2,6 +2,7 @@ package gommult
 
 import (
 	"errors"
+	"fmt"
 	"sync"
 )
 
@@ -14,7 +15,6 @@ var (
 // Matrix is a 2d array
 type Matrix struct {
 	N    int
-	mu   sync.RWMutex
 	data [][]float64
 }
 
@@ -50,24 +50,26 @@ func New(size int) func(...float64) (*Matrix, error) {
 	}
 }
 
+func (A *Matrix) debug() {
+	for i := 0; i < A.N; i++ {
+		for j := 0; j < A.N; j++ {
+			fmt.Println(&A.data[i][j], " ")
+		}
+	}
+}
+
 // At access (i, j) element
 func (A *Matrix) At(i, j int) float64 {
-	A.mu.RLock()
-	defer A.mu.RUnlock()
 	return A.data[i][j]
 }
 
 // Set set (i, j) element with val
 func (A *Matrix) Set(i, j int, val float64) {
-	A.mu.Lock()
-	defer A.mu.Unlock()
 	A.data[i][j] = val
 }
 
 // Add adds (i, j) element with wal
 func (A *Matrix) Add(i, j int, val float64) {
-	A.mu.Lock()
-	defer A.mu.Unlock()
 	A.data[i][j] += val
 }
 
@@ -96,6 +98,7 @@ func (A *Matrix) MultNaive(B, C *Matrix) (err error) {
 }
 
 // ParalMultNaive matrix multiplication O(n^3)
+// TODO: optimize cache aware
 func (A *Matrix) ParalMultNaive(B, C *Matrix) (err error) {
 	var (
 		i, j int
@@ -184,6 +187,7 @@ func (A *Matrix) MultIJK(blockSize int, B, C *Matrix) (err error) {
 }
 
 // ParalMultIJK matrix multiplication
+// TODO: optimize cache aware
 func (A *Matrix) ParalMultIJK(blockSize int, B, C *Matrix) (err error) {
 	var (
 		kk, jj, i, j int
@@ -228,7 +232,6 @@ func (A *Matrix) ParalMultIJK(blockSize int, B, C *Matrix) (err error) {
 		}
 		wg.Wait()
 	}
-
 	for jj = 0; jj < en; jj += blockSize {
 		for i = 0; i < N; i++ {
 			for j = jj; j < jj+blockSize; j++ {
@@ -249,6 +252,7 @@ func (A *Matrix) ParalMultIJK(blockSize int, B, C *Matrix) (err error) {
 		for j = en; j < N; j++ {
 			wg.Add(1)
 			go func(i, j int) {
+				defer wg.Done()
 				sum := 0.0
 				for k := en; k < N; k++ {
 					sum += A.At(i, k) * B.At(k, j)
@@ -317,6 +321,7 @@ func (A *Matrix) MultIKJ(blockSize int, B, C *Matrix) (err error) {
 }
 
 // ParalMultIKJ matrix multiplication
+// TODO: optimize cache aware
 func (A *Matrix) ParalMultIKJ(blockSize int, B, C *Matrix) (err error) {
 	var (
 		kk, jj, i, k int
@@ -328,65 +333,45 @@ func (A *Matrix) ParalMultIKJ(blockSize int, B, C *Matrix) (err error) {
 		return ErrMatrixSize
 	}
 
-	wg := sync.WaitGroup{}
 	for kk = 0; kk < en; kk += blockSize {
 		for jj = 0; jj < en; jj += blockSize {
-			for i = 0; i < N; i++ {
-				for k = kk; k < kk+blockSize; k++ {
-					wg.Add(1)
-					go func(i, k int) {
-						defer wg.Done()
-						r := A.At(i, k)
-						for j := jj; j < jj+blockSize; j++ {
-							C.Add(i, j, r*B.At(k, j))
-						}
-					}(i, k)
-				}
-			}
-			wg.Wait()
-		}
-		for i = 0; i < N; i++ {
-			for k = kk; k < kk+blockSize; k++ {
-				wg.Add(1)
-				go func(i, k int) {
-					defer wg.Done()
-					r := A.At(i, k)
-					for j := en; j < N; j++ {
-						C.Add(i, j, r*B.At(k, j))
-					}
-				}(i, k)
-			}
-		}
-		wg.Wait()
-	}
-	for jj = 0; jj < en; jj += blockSize {
-		for i = 0; i < N; i++ {
-			for k = en; k < N; k++ {
-				wg.Add(1)
-				go func(i, k int) {
-					defer wg.Done()
+			for i := 0; i < N; i++ {
+				for k := kk; k < kk+blockSize; k++ {
 					r := A.At(i, k)
 					for j := jj; j < jj+blockSize; j++ {
 						C.Add(i, j, r*B.At(k, j))
 					}
-				}(i, k)
+				}
 			}
 		}
-		wg.Wait()
-	}
-	for i = 0; i < N; i++ {
-		for k = en; k < N; k++ {
-			wg.Add(1)
-			go func(i, k int) {
-				defer wg.Done()
+
+		for i = 0; i < N; i++ {
+			for k = kk; k < kk+blockSize; k++ {
 				r := A.At(i, k)
 				for j := en; j < N; j++ {
 					C.Add(i, j, r*B.At(k, j))
 				}
-			}(i, k)
+			}
 		}
 	}
-	wg.Wait()
+	for jj = 0; jj < en; jj += blockSize {
+		for i = 0; i < N; i++ {
+			for k = en; k < N; k++ {
+				r := A.At(i, k)
+				for j := jj; j < jj+blockSize; j++ {
+					C.Add(i, j, r*B.At(k, j))
+				}
+			}
+		}
+	}
+	for i = 0; i < N; i++ {
+		for k = en; k < N; k++ {
+			r := A.At(i, k)
+			for j := en; j < N; j++ {
+				C.Add(i, j, r*B.At(k, j))
+			}
+		}
+	}
 
 	return
 }
