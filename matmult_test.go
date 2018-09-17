@@ -553,7 +553,9 @@ func BenchmarkMatrix_MultBlock(b *testing.B) {
 			for _, size := range bSize {
 				b.Run(fmt.Sprintf("blockSize-%d", size), func(b *testing.B) {
 					for i := 0; i < b.N; i++ {
-						tt.f(size, B, C)
+						if err := tt.f(size, B, C); err != nil {
+							b.Errorf("%s() error %v, want nil", tt.name, err)
+						}
 					}
 				})
 			}
