@@ -1,7 +1,7 @@
-// Package gommult is a golang package that implements cache-aware lock-free
-// tiling optimization for matrix multiplication.
+// Package gomat is a golang matrix package with cache-aware lock-free
+// tiling optimization.
 //
-// The following contents explains how algorithm works.
+// The following contents explains how multiplication algorithm works.
 //
 // Prior knowledge
 //
@@ -80,4 +80,4 @@
 // only associativity) is limited to:
 //
 //  q = O(sqrt(M_fast))
-package gommult
+package gomat

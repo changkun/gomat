@@ -1,4 +1,4 @@
-package gommult
+package gomat
 
 import (
 	"errors"
