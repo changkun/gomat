@@ -14,7 +14,7 @@ func (A *Matrix) DotNaiveIJK(B, C *Matrix) (err error) {
 		i, j, k int
 		sum     float64
 	)
-	if A.Col() != B.Row() || C.Row() != A.Row() || C.Col() != B.Col() {
+	if (A.Col() != B.Row()) || (C.Row() != A.Row()) || (C.Col() != B.Col()) {
 		return ErrMatSize
 	}
 

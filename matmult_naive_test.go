@@ -9,8 +9,6 @@ import (
 	"testing"
 )
 
-// type NaiveMult func(B, C *Matrix) error
-
 func TestMatrix_MultNaive(t *testing.T) {
 	A, err := New(2, 3)(
 		1, 2, 3,
@@ -177,7 +175,7 @@ func TestMatrix_MultNaive(t *testing.T) {
 	})
 }
 
-// // ----------------------- benchmarks ----------------------------
+// ----------------------- benchmarks ----------------------------
 
 func BenchmarkNaive(b *testing.B) {
 	for n := 0; n < 100; n++ {
@@ -256,71 +254,3 @@ func BenchmarkNaiveP(b *testing.B) {
 		})
 	}
 }
-
-// var (
-// 	bSize = []int{1, 2, 3, 4, 5, 6, 7, 8}
-// 	A     = &Matrix{
-// 		N: 8,
-// 		data: [][]float64{
-// 			[]float64{1, 2, 3, 4, 5, 6, 7, 8},
-// 			[]float64{9, 1, 2, 3, 4, 5, 6, 7},
-// 			[]float64{8, 9, 1, 2, 3, 4, 5, 6},
-// 			[]float64{7, 8, 9, 1, 2, 3, 4, 5},
-// 			[]float64{6, 7, 8, 9, 1, 2, 3, 4},
-// 			[]float64{5, 6, 7, 8, 9, 1, 2, 3},
-// 			[]float64{4, 5, 6, 7, 8, 9, 1, 2},
-// 			[]float64{3, 4, 5, 6, 7, 8, 9, 0},
-// 		},
-// 	}
-// 	B = &Matrix{
-// 		N: 8,
-// 		data: [][]float64{
-// 			[]float64{9, 8, 7, 6, 5, 4, 3, 2},
-// 			[]float64{1, 9, 8, 7, 6, 5, 4, 3},
-// 			[]float64{2, 1, 9, 8, 7, 6, 5, 4},
-// 			[]float64{3, 2, 1, 9, 8, 7, 6, 5},
-// 			[]float64{4, 3, 2, 1, 9, 8, 7, 6},
-// 			[]float64{5, 4, 3, 2, 1, 9, 8, 7},
-// 			[]float64{6, 5, 4, 3, 2, 1, 9, 8},
-// 			[]float64{7, 6, 5, 4, 3, 2, 1, 0},
-// 		},
-// 	}
-// 	C = &Matrix{
-// 		N: 8,
-// 		data: [][]float64{
-// 			[]float64{0, 0, 0, 0, 0, 0, 0, 0},
-// 			[]float64{0, 0, 0, 0, 0, 0, 0, 0},
-// 			[]float64{0, 0, 0, 0, 0, 0, 0, 0},
-// 			[]float64{0, 0, 0, 0, 0, 0, 0, 0},
-// 			[]float64{0, 0, 0, 0, 0, 0, 0, 0},
-// 			[]float64{0, 0, 0, 0, 0, 0, 0, 0},
-// 			[]float64{0, 0, 0, 0, 0, 0, 0, 0},
-// 			[]float64{0, 0, 0, 0, 0, 0, 0, 0},
-// 		},
-// 	}
-// )
-
-// func BenchmarkMatrix_MultNaive(b *testing.B) {
-// 	tests := []struct {
-// 		name string
-// 		f    NaiveMult
-// 	}{
-// 		{
-// 			name: "A.MultNaive",
-// 			f:    A.MultNaive,
-// 		},
-// 		{
-// 			name: "A.ParalMultNaive",
-// 			f:    A.ParalMultNaive,
-// 		},
-// 	}
-// 	for _, tt := range tests {
-// 		b.Run(tt.name, func(b *testing.B) {
-// 			for i := 0; i < b.N; i++ {
-// 				if err := tt.f(B, C); err != nil {
-// 					b.Errorf("%s() error %v, want nil", tt.name, err)
-// 				}
-// 			}
-// 		})
-// 	}
-// }
