@@ -123,7 +123,7 @@ func TestMatrixAccess(t *testing.T) {
 	A.Print()
 	t.Run("Size()", func(t *testing.T) {
 		mm, nn := A.Size()
-		if mm != m || n != n {
+		if mm != m || nn != n {
 			t.Errorf("Size() error, expect: %d,%d, got: %d,%d", m, n, mm, nn)
 		}
 	})
