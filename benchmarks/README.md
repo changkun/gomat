@@ -75,15 +75,13 @@ Machine (16GB total)
   CoProc(OpenCL) "opencl0d1"
 ```
 
-## Matrix Multiplication: Naive v.s. Naive with concurrency
+## Matrix Multiplication: Naive v.s. Naive with concurrency v.s. Vanilla block v.s. Block with concurrency
 
 Best choice:
 
-- naive jik
-- parallel naive jik
+- block jik 36
+- parallel block jik 6
+
+(TODO)
 
 ![](images/naive.png)
-
-## Matrix Multiplication: Tiling v.s. Tiling with concurrency
-
-TODO

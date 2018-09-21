@@ -4,6 +4,8 @@
 
 package gomat
 
+import "sync"
+
 // DotBlockJIK block matrix multiplication
 func (A *Matrix) DotBlockJIK(blockSize int, B, C *Matrix) (err error) {
 	if (A.Col() != B.Row()) || (C.Row() != A.Row()) || (C.Col() != B.Col()) {
@@ -70,5 +72,90 @@ func (A *Matrix) DotBlockJIK(blockSize int, B, C *Matrix) (err error) {
 			C.Inc(i, j, sum)
 		}
 	}
+	return
+}
+
+// DotBlockJIKP block matrix multiplication
+func (A *Matrix) DotBlockJIKP(blockSize int, B, C *Matrix) (err error) {
+	if (A.Col() != B.Row()) || (C.Row() != A.Row()) || (C.Col() != B.Col()) {
+		return ErrMatSize
+	}
+	min := A.Row()
+	if A.Col() < min {
+		min = A.Col()
+	}
+	if B.Col() < min {
+		min = B.Col()
+	}
+	en := blockSize * (min / blockSize)
+	wg := sync.WaitGroup{}
+	for kk := 0; kk < en; kk += blockSize {
+		for jj := 0; jj < en; jj += blockSize {
+			wg.Add(1)
+			go func(kk, jj int) {
+				for j := jj; j < jj+blockSize; j++ {
+					for i := 0; i < A.Row(); i++ {
+						sum := 0.0
+						for k := kk; k < kk+blockSize; k++ {
+							sum += A.At(i, k) * B.At(k, j)
+						}
+						C.Inc(i, j, sum)
+					}
+				}
+				wg.Done()
+			}(kk, jj)
+		}
+		wg.Wait()
+
+		// residue right
+		for j := en; j < B.Col(); j++ {
+			wg.Add(1)
+			go func(j int) {
+				for i := 0; i < A.Row(); i++ {
+					sum := 0.0
+					for k := kk; k < kk+blockSize; k++ {
+						sum += A.At(i, k) * B.At(k, j)
+					}
+					C.Inc(i, j, sum)
+				}
+				wg.Done()
+			}(j)
+		}
+		wg.Wait()
+	}
+
+	// residue bottom
+	for jj := 0; jj < en; jj += blockSize {
+		wg.Add(1)
+		go func(jj int) {
+			for j := jj; j < jj+blockSize; j++ {
+				for i := 0; i < A.Row(); i++ {
+					sum := 0.0
+					for k := en; k < A.Col(); k++ {
+						sum += A.At(i, k) * B.At(k, j)
+					}
+					C.Inc(i, j, sum)
+				}
+			}
+			wg.Done()
+		}(jj)
+	}
+	wg.Wait()
+
+	// residule bottom right
+	for j := en; j < B.Col(); j++ {
+		wg.Add(1)
+		go func(j int) {
+			for i := 0; i < A.Row(); i++ {
+				sum := 0.0
+				for k := en; k < A.Col(); k++ {
+					sum += A.At(i, k) * B.At(k, j)
+				}
+				C.Inc(i, j, sum)
+			}
+			wg.Done()
+		}(j)
+	}
+	wg.Wait()
 	return
 }

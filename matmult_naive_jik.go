@@ -37,7 +37,6 @@ func (A *Matrix) DotNaiveJIKP(B, C *Matrix) (err error) {
 	for j := 0; j < B.Col(); j++ {
 		wg.Add(1)
 		go func(j int) {
-			defer wg.Done()
 			for i := 0; i < A.Row(); i++ {
 				sum := 0.0
 				for k := 0; k < A.Col(); k++ {
@@ -45,6 +44,7 @@ func (A *Matrix) DotNaiveJIKP(B, C *Matrix) (err error) {
 				}
 				C.Set(i, j, sum)
 			}
+			wg.Done()
 		}(j)
 	}
 	wg.Wait()

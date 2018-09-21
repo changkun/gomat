@@ -4,6 +4,8 @@
 
 package gomat
 
+import "sync"
+
 // DotBlockIKJ block matrix multiplication
 func (A *Matrix) DotBlockIKJ(blockSize int, B, C *Matrix) (err error) {
 	if (A.Col() != B.Row()) || (C.Row() != A.Row()) || (C.Col() != B.Col()) {
@@ -67,58 +69,81 @@ func (A *Matrix) DotBlockIKJ(blockSize int, B, C *Matrix) (err error) {
 	return
 }
 
-// // ParalMultIKJ matrix multiplication
-// // TODO: optimize cache aware
-// func (A *Matrix) ParalMultIKJ(blockSize int, B, C *Matrix) (err error) {
-// 	var (
-// 		kk, jj, i, k int
-// 		N            = A.N
-// 		en           = blockSize * (N / blockSize)
-// 	)
+// DotBlockIKJP block matrix multiplication
+func (A *Matrix) DotBlockIKJP(blockSize int, B, C *Matrix) (err error) {
+	if (A.Col() != B.Row()) || (C.Row() != A.Row()) || (C.Col() != B.Col()) {
+		return ErrMatSize
+	}
+	min := A.Row()
+	if A.Col() < min {
+		min = A.Col()
+	}
+	if B.Col() < min {
+		min = B.Col()
+	}
+	en := blockSize * (min / blockSize)
+	wg := sync.WaitGroup{}
+	for kk := 0; kk < en; kk += blockSize {
+		for jj := 0; jj < en; jj += blockSize {
+			wg.Add(1)
+			go func(kk, jj int) {
+				for i := 0; i < A.Row(); i++ {
+					for k := kk; k < kk+blockSize; k++ {
+						r := A.At(i, k)
+						for j := jj; j < jj+blockSize; j++ {
+							C.Inc(i, j, r*B.At(k, j))
+						}
+					}
+				}
+				wg.Done()
+			}(kk, jj)
+		}
+		wg.Wait()
+		for i := 0; i < A.Row(); i++ {
+			wg.Add(1)
+			go func(i int) {
+				for k := kk; k < kk+blockSize; k++ {
+					r := A.At(i, k)
+					for j := en; j < B.Col(); j++ {
+						C.Inc(i, j, r*B.At(k, j))
+					}
+				}
+				wg.Done()
+			}(i)
+		}
+		wg.Wait()
+	}
 
-// 	if N != B.N || N != C.N {
-// 		return ErrMatrixSize
-// 	}
+	// residule bottom
+	for jj := 0; jj < en; jj += blockSize {
+		wg.Add(1)
+		go func(jj int) {
+			for i := 0; i < A.Row(); i++ {
+				for k := en; k < A.Col(); k++ {
+					r := A.At(i, k)
+					for j := jj; j < jj+blockSize; j++ {
+						C.Inc(i, j, r*B.At(k, j))
+					}
+				}
+			}
+			wg.Done()
+		}(jj)
+	}
+	wg.Wait()
 
-// 	for kk = 0; kk < en; kk += blockSize {
-// 		for jj = 0; jj < en; jj += blockSize {
-// 			for i := 0; i < N; i++ {
-// 				for k := kk; k < kk+blockSize; k++ {
-// 					r := A.At(i, k)
-// 					for j := jj; j < jj+blockSize; j++ {
-// 						C.Increment(i, j, r*B.At(k, j))
-// 					}
-// 				}
-// 			}
-// 		}
-
-// 		for i = 0; i < N; i++ {
-// 			for k = kk; k < kk+blockSize; k++ {
-// 				r := A.At(i, k)
-// 				for j := en; j < N; j++ {
-// 					C.Increment(i, j, r*B.At(k, j))
-// 				}
-// 			}
-// 		}
-// 	}
-// 	for jj = 0; jj < en; jj += blockSize {
-// 		for i = 0; i < N; i++ {
-// 			for k = en; k < N; k++ {
-// 				r := A.At(i, k)
-// 				for j := jj; j < jj+blockSize; j++ {
-// 					C.Increment(i, j, r*B.At(k, j))
-// 				}
-// 			}
-// 		}
-// 	}
-// 	for i = 0; i < N; i++ {
-// 		for k = en; k < N; k++ {
-// 			r := A.At(i, k)
-// 			for j := en; j < N; j++ {
-// 				C.Increment(i, j, r*B.At(k, j))
-// 			}
-// 		}
-// 	}
-
-// 	return
-// }
+	// residule bottom right
+	for i := 0; i < A.Row(); i++ {
+		wg.Add(1)
+		go func(i int) {
+			for k := en; k < A.Col(); k++ {
+				r := A.At(i, k)
+				for j := en; j < B.Col(); j++ {
+					C.Inc(i, j, r*B.At(k, j))
+				}
+			}
+			wg.Done()
+		}(i)
+	}
+	wg.Wait()
+	return
+}

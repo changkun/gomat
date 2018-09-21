@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-func TestMatrix_MultNaive(t *testing.T) {
+func TestMatrix_DotNaive(t *testing.T) {
 	A, err := New(2, 3)(
 		1, 2, 3,
 		2, 3, 1,
@@ -25,20 +25,38 @@ func TestMatrix_MultNaive(t *testing.T) {
 	if err != nil {
 		t.Errorf("New(3, 1) error, expect nil")
 	}
-
-	t.Run("DotNaiveIJK()", func(t *testing.T) {
-		C, err := New(2, 1)(
-			0,
-			0,
-		)
-		T, err := New(2, 1)(
-			10,
-			13,
-		)
+	T, err := New(2, 1)(
+		10,
+		13,
+	)
+	if err != nil {
+		t.Errorf("New(2, 1) error, expect nil")
+	}
+	t.Run("DotNaive()", func(t *testing.T) {
+		C := Zero(2, 1)
+		err := A.DotNaive(B, C)
 		if err != nil {
-			t.Errorf("New(2, 1) error, expect nil")
+			t.Errorf("DotNaive(B, C) error, expect nil")
 		}
-		err = A.DotNaiveIJK(B, C)
+		if !T.Equal(C) {
+			t.Errorf("DotNaive() not euqal, expect euqal, got:")
+			C.Print()
+		}
+	})
+	t.Run("DotNaiveP()", func(t *testing.T) {
+		C := Zero(2, 1)
+		err := A.DotNaiveP(B, C)
+		if err != nil {
+			t.Errorf("DotNaiveP(B, C) error, expect nil")
+		}
+		if !T.Equal(C) {
+			t.Errorf("DotNaiveP() not euqal, expect euqal, got:")
+			C.Print()
+		}
+	})
+	t.Run("DotNaiveIJK()", func(t *testing.T) {
+		C := Zero(2, 1)
+		err := A.DotNaiveIJK(B, C)
 		if err != nil {
 			t.Errorf("DotNaiveIJK(B, C) error, expect nil")
 		}
@@ -48,18 +66,8 @@ func TestMatrix_MultNaive(t *testing.T) {
 		}
 	})
 	t.Run("DotNaiveIKJ()", func(t *testing.T) {
-		C, err := New(2, 1)(
-			0,
-			0,
-		)
-		T, err := New(2, 1)(
-			10,
-			13,
-		)
-		if err != nil {
-			t.Errorf("New(2, 1) error, expect nil")
-		}
-		err = A.DotNaiveIKJ(B, C)
+		C := Zero(2, 1)
+		err := A.DotNaiveIKJ(B, C)
 		if err != nil {
 			t.Errorf("DotNaiveIKJ(B, C) error, expect nil")
 		}
@@ -69,18 +77,8 @@ func TestMatrix_MultNaive(t *testing.T) {
 		}
 	})
 	t.Run("DotNaiveJIK()", func(t *testing.T) {
-		C, err := New(2, 1)(
-			0,
-			0,
-		)
-		T, err := New(2, 1)(
-			10,
-			13,
-		)
-		if err != nil {
-			t.Errorf("New(2, 1) error, expect nil")
-		}
-		err = A.DotNaiveJIK(B, C)
+		C := Zero(2, 1)
+		err := A.DotNaiveJIK(B, C)
 		if err != nil {
 			t.Errorf("DotNaiveJIK(B, C) error, expect nil")
 		}
@@ -90,18 +88,8 @@ func TestMatrix_MultNaive(t *testing.T) {
 		}
 	})
 	t.Run("DotNaiveJKI()", func(t *testing.T) {
-		C, err := New(2, 1)(
-			0,
-			0,
-		)
-		T, err := New(2, 1)(
-			10,
-			13,
-		)
-		if err != nil {
-			t.Errorf("New(2, 1) error, expect nil")
-		}
-		err = A.DotNaiveJKI(B, C)
+		C := Zero(2, 1)
+		err := A.DotNaiveJKI(B, C)
 		if err != nil {
 			t.Errorf("DotNaiveJKI(B, C) error, expect nil")
 		}
@@ -111,18 +99,8 @@ func TestMatrix_MultNaive(t *testing.T) {
 		}
 	})
 	t.Run("DotNaiveKIJ()", func(t *testing.T) {
-		C, err := New(2, 1)(
-			0,
-			0,
-		)
-		T, err := New(2, 1)(
-			10,
-			13,
-		)
-		if err != nil {
-			t.Errorf("New(2, 1) error, expect nil")
-		}
-		err = A.DotNaiveKIJ(B, C)
+		C := Zero(2, 1)
+		err := A.DotNaiveKIJ(B, C)
 		if err != nil {
 			t.Errorf("DotNaiveKIJ(B, C) error, expect nil")
 		}
@@ -132,18 +110,8 @@ func TestMatrix_MultNaive(t *testing.T) {
 		}
 	})
 	t.Run("DotNaiveKJI()", func(t *testing.T) {
-		C, err := New(2, 1)(
-			0,
-			0,
-		)
-		T, err := New(2, 1)(
-			10,
-			13,
-		)
-		if err != nil {
-			t.Errorf("New(2, 1) error, expect nil")
-		}
-		err = A.DotNaiveKJI(B, C)
+		C := Zero(2, 1)
+		err := A.DotNaiveKJI(B, C)
 		if err != nil {
 			t.Errorf("DotNaiveKJI(B, C) error, expect nil")
 		}
@@ -153,18 +121,8 @@ func TestMatrix_MultNaive(t *testing.T) {
 		}
 	})
 	t.Run("DotNaiveIJKP()", func(t *testing.T) {
-		C, err := New(2, 1)(
-			0,
-			0,
-		)
-		T, err := New(2, 1)(
-			10,
-			13,
-		)
-		if err != nil {
-			t.Errorf("New(2, 1) error, expect nil")
-		}
-		err = A.DotNaiveIJKP(B, C)
+		C := Zero(2, 1)
+		err := A.DotNaiveIJKP(B, C)
 		if err != nil {
 			t.Errorf("DotNaiveIJKP(B, C) error, expect nil")
 		}
@@ -173,16 +131,72 @@ func TestMatrix_MultNaive(t *testing.T) {
 			C.Print()
 		}
 	})
+	t.Run("DotNaiveIKJP()", func(t *testing.T) {
+		C := Zero(2, 1)
+		err := A.DotNaiveIKJP(B, C)
+		if err != nil {
+			t.Errorf("DotNaiveIKJP(B, C) error, expect nil")
+		}
+		if !T.Equal(C) {
+			t.Errorf("DotNaiveIKJP() not euqal, expect euqal, got:")
+			C.Print()
+		}
+	})
+	t.Run("DotNaiveJIKP()", func(t *testing.T) {
+		C := Zero(2, 1)
+		err := A.DotNaiveJIKP(B, C)
+		if err != nil {
+			t.Errorf("DotNaiveJIKP(B, C) error, expect nil")
+		}
+		if !T.Equal(C) {
+			t.Errorf("DotNaiveJIKP() not euqal, expect euqal, got:")
+			C.Print()
+		}
+	})
+	t.Run("DotNaiveJKIP()", func(t *testing.T) {
+		C := Zero(2, 1)
+		err := A.DotNaiveJKIP(B, C)
+		if err != nil {
+			t.Errorf("DotNaiveJKIP(B, C) error, expect nil")
+		}
+		if !T.Equal(C) {
+			t.Errorf("DotNaiveJKIP() not euqal, expect euqal, got:")
+			C.Print()
+		}
+	})
+	t.Run("DotNaiveKIJP()", func(t *testing.T) {
+		C := Zero(2, 1)
+		err := A.DotNaiveKIJP(B, C)
+		if err != nil {
+			t.Errorf("DotNaiveKIJP(B, C) error, expect nil")
+		}
+		if !T.Equal(C) {
+			t.Errorf("DotNaiveKIJP() not euqal, expect euqal, got:")
+			C.Print()
+		}
+	})
+	t.Run("DotNaiveKJIP()", func(t *testing.T) {
+		C := Zero(2, 1)
+		err := A.DotNaiveKJIP(B, C)
+		if err != nil {
+			t.Errorf("DotNaiveKJIP(B, C) error, expect nil")
+		}
+		if !T.Equal(C) {
+			t.Errorf("DotNaiveKJIP() not euqal, expect euqal, got:")
+			C.Print()
+		}
+	})
 }
 
 // ----------------------- benchmarks ----------------------------
 
 func BenchmarkNaive(b *testing.B) {
-	for n := 0; n < 100; n++ {
+	for n := 80; n < 100; n++ {
 		A := Rand(n, n)
 		B := Rand(n, n)
 		C := Zero(n, n)
 
+		// vanilla
 		b.Run(fmt.Sprintf("DotNaiveIJK() %dx%d", n, n), func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
 				A.DotNaiveIJK(B, C)
@@ -213,15 +227,8 @@ func BenchmarkNaive(b *testing.B) {
 				A.DotNaiveKJI(B, C)
 			}
 		})
-	}
-}
 
-func BenchmarkNaiveP(b *testing.B) {
-	for n := 55; n < 100; n++ {
-		A := Rand(n, n)
-		B := Rand(n, n)
-		C := Zero(n, n)
-
+		// concurrency
 		b.Run(fmt.Sprintf("DotNaiveIJKP() %dx%d", n, n), func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
 				A.DotNaiveIJKP(B, C)

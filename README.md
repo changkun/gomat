@@ -27,8 +27,10 @@ C := gomat.Zero(2, 4)
 
 
 // C = A x B, throw err if dimentionality error
-err = A.DotNaive(B, C)
-err = A.DotNaiveP(B, C) // with concurrency optimization
+err = A.Dot(B, C)
+err = A.Dot(B, C) // with concurrency optimization
+// or
+C, err := gomat.Dot(A, B) // alloc new matrix inside Dot
 ```
 
 ## License

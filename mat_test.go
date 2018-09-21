@@ -192,7 +192,7 @@ func BenchmarkNewRand(b *testing.B) {
 		"RandParallel": RandP,
 	}
 	sizes := []int{
-		5, 50, 500, 5000,
+		5, 50, 500,
 	}
 	for k, f := range fs {
 		b.Run(k, func(b *testing.B) {

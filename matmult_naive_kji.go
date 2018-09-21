@@ -37,13 +37,13 @@ func (A *Matrix) DotNaiveKJIP(B, C *Matrix) (err error) {
 	for k := 0; k < A.Col(); k++ {
 		wg.Add(1)
 		go func(k int) {
-			defer wg.Done()
 			for j := 0; j < B.Col(); j++ {
 				r := B.At(k, j)
 				for i := 0; i < A.Row(); i++ {
 					C.Inc(i, j, r*A.At(i, k))
 				}
 			}
+			wg.Done()
 		}(k)
 	}
 	wg.Wait()
