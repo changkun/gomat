@@ -1,7 +1,7 @@
 language: go
 
 script:
-  - go test -race -bench=. -v -coverprofile=coverage.txt -covermode=atomic
+  - go test -race -v -coverprofile=coverage.txt -covermode=atomic -timeout=120m
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

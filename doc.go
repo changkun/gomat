@@ -25,6 +25,13 @@
 //
 // Tiled matrix multiply
 //
+//  C = A·B =
+//   /          \   /         \      /                                \
+//  |  A11  A12  | |  B11 B12  |    | A11·B11+A12·B21  A11·B12+A12·B22 |
+//  |            | |           | == |                                  |
+//  |  A21  A22  | |  B21 B22  |    | A21·B11+A22·B22  A21·B12+A22·B22 |
+//   \          /   \         /      \                                /
+//
 // Consider A, B, C to be N-by-N matrices of b-by-b sub-blocks:
 //
 //  b = n / N is called the *block size*
