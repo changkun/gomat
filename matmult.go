@@ -6,12 +6,12 @@ package gomat
 
 // Dot matrix multiplication
 func (A *Matrix) Dot(B, C *Matrix) (err error) {
-	return A.DotBlock(B, C)
+	return A.DotNaive(B, C)
 }
 
 // DotP matrix multiplication
 func (A *Matrix) DotP(B, C *Matrix) (err error) {
-	return A.DotBlockP(B, C)
+	return A.DotNaiveP(B, C)
 }
 
 // Dot matrix multiplication

@@ -77,11 +77,4 @@ Machine (16GB total)
 
 ## Matrix Multiplication: Naive v.s. Naive with concurrency v.s. Vanilla block v.s. Block with concurrency
 
-Best choice:
-
-- block jik 36
-- parallel block jik 6
-
-(TODO)
-
-![](images/naive.png)
+![](images/block-naive.png)

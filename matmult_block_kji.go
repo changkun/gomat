@@ -133,16 +133,16 @@ func (A *Matrix) DotBlockKJIP(blockSize int, B, C *Matrix) (err error) {
 
 	// residule bottom right
 	for k := en; k < A.Col(); k++ {
-		wg.Add(1)
-		go func(k int) {
-			for j := en; j < B.Col(); j++ {
+		for j := en; j < B.Col(); j++ {
+			wg.Add(1)
+			go func(k, j int) {
 				r := B.At(k, j)
 				for i := 0; i < A.Row(); i++ {
 					C.Inc(i, j, r*A.At(i, k))
 				}
-			}
-			wg.Done()
-		}(k)
+				wg.Done()
+			}(k, j)
+		}
 	}
 	wg.Wait()
 	return
