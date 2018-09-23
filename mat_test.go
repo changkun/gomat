@@ -57,7 +57,7 @@ func TestNew(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := New(tt.m, tt.n)(tt.arr...)
+			got, err := NewDense(tt.m, tt.n)(tt.arr...)
 			if err != nil {
 				t.Errorf("New() error = %v, want nil", err)
 			}
@@ -70,7 +70,7 @@ func TestNew(t *testing.T) {
 			}
 		})
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := NewP(tt.m, tt.n)(tt.arr...)
+			got, err := NewDenseP(tt.m, tt.n)(tt.arr...)
 			if err != nil {
 				t.Errorf("NewP() error = %v, want nil", err)
 			}
@@ -104,13 +104,13 @@ func TestNewFail(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := New(tt.m, tt.n)(tt.arr...)
+			_, err := NewDense(tt.m, tt.n)(tt.arr...)
 			if err != ErrNumElem {
 				t.Errorf("New() error is nil, want err")
 			}
 		})
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := NewP(tt.m, tt.n)(tt.arr...)
+			_, err := NewDenseP(tt.m, tt.n)(tt.arr...)
 			if err != ErrNumElem {
 				t.Errorf("NewP() error is nil, want err")
 			}
@@ -187,7 +187,7 @@ func TestMatrixAccess(t *testing.T) {
 
 // -------------- benchmarks -----------------
 func BenchmarkNewRand(b *testing.B) {
-	fs := map[string]func(m, n int) *Matrix{
+	fs := map[string]func(m, n int) *Dense{
 		"Rand":         Rand,
 		"RandParallel": RandP,
 	}

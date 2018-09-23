@@ -5,7 +5,7 @@
 package gomat
 
 // Add adds matrix B to A
-func (A *Matrix) Add(B *Matrix) error {
+func (A *Dense) Add(B Matrix) error {
 
 	if !A.EqualShape(B) {
 		return ErrMatSize
@@ -20,7 +20,7 @@ func (A *Matrix) Add(B *Matrix) error {
 }
 
 // Add A+B
-func Add(A, B *Matrix) (*Matrix, error) {
+func Add(A, B *Dense) (*Dense, error) {
 	if !A.EqualShape(B) {
 		return nil, ErrMatSize
 	}

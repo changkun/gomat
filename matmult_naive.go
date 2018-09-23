@@ -6,12 +6,12 @@ package gomat
 
 // DotNaive matrix multiplication O(n^3)
 // Use JIK version here, see ./benchmark/README.md
-func (A *Matrix) DotNaive(B, C *Matrix) (err error) {
+func (A *Dense) DotNaive(B, C Matrix) (err error) {
 	return A.DotNaiveJIK(B, C)
 }
 
 // DotNaiveP matrix multiplication O(n^3)
 // Use JIKP version here, see ./benchmark/README.md
-func (A *Matrix) DotNaiveP(B, C *Matrix) (err error) {
+func (A *Dense) DotNaiveP(B, C Matrix) (err error) {
 	return A.DotNaiveJIKP(B, C)
 }

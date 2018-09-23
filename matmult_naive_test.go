@@ -10,14 +10,14 @@ import (
 )
 
 func TestMatrix_DotNaive(t *testing.T) {
-	A, err := New(2, 3)(
+	A, err := NewDense(2, 3)(
 		1, 2, 3,
 		2, 3, 1,
 	)
 	if err != nil {
 		t.Errorf("New(2, 3) error, expect nil")
 	}
-	B, err := New(3, 1)(
+	B, err := NewDense(3, 1)(
 		3,
 		2,
 		1,
@@ -25,7 +25,7 @@ func TestMatrix_DotNaive(t *testing.T) {
 	if err != nil {
 		t.Errorf("New(3, 1) error, expect nil")
 	}
-	T, err := New(2, 1)(
+	T, err := NewDense(2, 1)(
 		10,
 		13,
 	)
@@ -33,7 +33,7 @@ func TestMatrix_DotNaive(t *testing.T) {
 		t.Errorf("New(2, 1) error, expect nil")
 	}
 
-	fs := map[string]func(*Matrix, *Matrix) error{
+	fs := map[string]func(Matrix, Matrix) error{
 		"DotNaive":     A.DotNaive,
 		"DotNaiveP":    A.DotNaiveP,
 		"DotNaiveIJK":  A.DotNaiveIJK,
@@ -73,7 +73,7 @@ func BenchmarkDotNaive(b *testing.B) {
 		B := Rand(n, n)
 		C := Zero(n, n)
 
-		fs := map[string]func(*Matrix, *Matrix) error{
+		fs := map[string]func(Matrix, Matrix) error{
 			fmt.Sprintf("DotNaiveIJK()-%dx%d", n, n):  A.DotNaiveIJK,
 			fmt.Sprintf("DotNaiveIKJ()-%dx%d", n, n):  A.DotNaiveIKJ,
 			fmt.Sprintf("DotNaiveJIK()-%dx%d", n, n):  A.DotNaiveJIK,

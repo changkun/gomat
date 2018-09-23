@@ -7,7 +7,7 @@ package gomat
 import "testing"
 
 func TestMatrix_Dot(t *testing.T) {
-	A, err := New(5, 8)(
+	A, err := NewDense(5, 8)(
 		1, 2, 3, 4, 5, 6, 7, 8,
 		9, 8, 7, 6, 5, 4, 3, 2,
 		1, 2, 3, 4, 5, 6, 7, 8,
@@ -17,7 +17,7 @@ func TestMatrix_Dot(t *testing.T) {
 	if err != nil {
 		t.Errorf("New(5, 8) error, expect nil")
 	}
-	B, err := New(8, 3)(
+	B, err := NewDense(8, 3)(
 		9, 8, 7,
 		6, 5, 4,
 		3, 2, 1,
@@ -30,7 +30,7 @@ func TestMatrix_Dot(t *testing.T) {
 	if err != nil {
 		t.Errorf("New(8, 3) error, expect nil")
 	}
-	T, err := New(5, 3)(
+	T, err := NewDense(5, 3)(
 		192, 186, 168,
 		248, 234, 212,
 		192, 186, 168,

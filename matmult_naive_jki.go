@@ -7,7 +7,7 @@ package gomat
 import "sync"
 
 // DotNaiveJKI matrix multiplication O(n^3)
-func (A *Matrix) DotNaiveJKI(B, C *Matrix) (err error) {
+func (A *Dense) DotNaiveJKI(B, C Matrix) (err error) {
 	var (
 		i, j, k int
 		r       float64
@@ -28,7 +28,7 @@ func (A *Matrix) DotNaiveJKI(B, C *Matrix) (err error) {
 }
 
 // DotNaiveJKIP matrix multiplication O(n^3)
-func (A *Matrix) DotNaiveJKIP(B, C *Matrix) (err error) {
+func (A *Dense) DotNaiveJKIP(B, C Matrix) (err error) {
 	if A.Col() != B.Row() || C.Row() != A.Row() || C.Col() != B.Col() {
 		return ErrMatSize
 	}

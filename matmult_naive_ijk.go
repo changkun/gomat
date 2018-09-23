@@ -9,7 +9,7 @@ import (
 )
 
 // DotNaiveIJK matrix multiplication O(n^3)
-func (A *Matrix) DotNaiveIJK(B, C *Matrix) (err error) {
+func (A *Dense) DotNaiveIJK(B, C Matrix) (err error) {
 	var (
 		i, j, k int
 		sum     float64
@@ -31,7 +31,7 @@ func (A *Matrix) DotNaiveIJK(B, C *Matrix) (err error) {
 }
 
 // DotNaiveIJKP matrix multiplication O(n^3)
-func (A *Matrix) DotNaiveIJKP(B, C *Matrix) (err error) {
+func (A *Dense) DotNaiveIJKP(B, C Matrix) (err error) {
 	if A.Col() != B.Row() || C.Row() != A.Row() || C.Col() != B.Col() {
 		return ErrMatSize
 	}

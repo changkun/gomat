@@ -5,17 +5,17 @@
 package gomat
 
 // Dot matrix multiplication
-func (A *Matrix) Dot(B, C *Matrix) (err error) {
+func (A *Dense) Dot(B, C Matrix) (err error) {
 	return A.DotNaive(B, C)
 }
 
 // DotP matrix multiplication
-func (A *Matrix) DotP(B, C *Matrix) (err error) {
+func (A *Dense) DotP(B, C Matrix) (err error) {
 	return A.DotNaiveP(B, C)
 }
 
 // Dot matrix multiplication
-func Dot(A, B *Matrix) (*Matrix, error) {
+func Dot(A, B *Dense) (*Dense, error) {
 	C := Zero(A.Row(), B.Col())
 	if err := A.Dot(B, C); err != nil {
 		return nil, err
@@ -24,7 +24,7 @@ func Dot(A, B *Matrix) (*Matrix, error) {
 }
 
 // DotP matrix multiplication
-func DotP(A, B *Matrix) (*Matrix, error) {
+func DotP(A, B *Dense) (*Dense, error) {
 	C := Zero(A.Row(), B.Col())
 	if err := A.DotP(B, C); err != nil {
 		return nil, err

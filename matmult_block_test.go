@@ -11,7 +11,7 @@ import (
 )
 
 func TestMatrix_MultBlock(t *testing.T) {
-	A, err := New(5, 8)(
+	A, err := NewDense(5, 8)(
 		1, 2, 3, 4, 5, 6, 7, 8,
 		9, 8, 7, 6, 5, 4, 3, 2,
 		1, 2, 3, 4, 5, 6, 7, 8,
@@ -21,7 +21,7 @@ func TestMatrix_MultBlock(t *testing.T) {
 	if err != nil {
 		t.Errorf("New(5, 8) error, expect nil")
 	}
-	B, err := New(8, 3)(
+	B, err := NewDense(8, 3)(
 		9, 8, 7,
 		6, 5, 4,
 		3, 2, 1,
@@ -34,7 +34,7 @@ func TestMatrix_MultBlock(t *testing.T) {
 	if err != nil {
 		t.Errorf("New(8, 3) error, expect nil")
 	}
-	T, err := New(5, 3)(
+	T, err := NewDense(5, 3)(
 		192, 186, 168,
 		248, 234, 212,
 		192, 186, 168,
@@ -68,7 +68,7 @@ func TestMatrix_MultBlock(t *testing.T) {
 		}
 	})
 
-	fs := map[string]func(int, *Matrix, *Matrix) error{
+	fs := map[string]func(int, Matrix, Matrix) error{
 		"DotBlockIJK":  A.DotBlockIJK,
 		"DotBlockIKJ":  A.DotBlockIKJ,
 		"DotBlockJIK":  A.DotBlockJIK,
@@ -113,7 +113,7 @@ func BenchmarkDotBlock(b *testing.B) {
 		nCacheLines := 256 * 1024 / 64
 		blockSize := int(math.Sqrt(float64(nCacheLines) / 3))
 
-		fs := map[string]func(int, *Matrix, *Matrix) error{
+		fs := map[string]func(int, Matrix, Matrix) error{
 			fmt.Sprintf("DotBlockIJK()-block-size-%d-%dx%d", blockSize, n, n):  A.DotBlockIJK,
 			fmt.Sprintf("DotBlockIKJ()-block-size-%d-%dx%d", blockSize, n, n):  A.DotBlockIKJ,
 			fmt.Sprintf("DotBlockJIK()-block-size-%d-%dx%d", blockSize, n, n):  A.DotBlockJIK,

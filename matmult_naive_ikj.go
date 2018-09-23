@@ -7,7 +7,7 @@ package gomat
 import "sync"
 
 // DotNaiveIKJ matrix multiplication O(n^3)
-func (A *Matrix) DotNaiveIKJ(B, C *Matrix) (err error) {
+func (A *Dense) DotNaiveIKJ(B, C Matrix) (err error) {
 	var (
 		i, j, k int
 		r       float64
@@ -28,7 +28,7 @@ func (A *Matrix) DotNaiveIKJ(B, C *Matrix) (err error) {
 }
 
 // DotNaiveIKJP matrix multiplication O(n^3)
-func (A *Matrix) DotNaiveIKJP(B, C *Matrix) (err error) {
+func (A *Dense) DotNaiveIKJP(B, C Matrix) (err error) {
 	if A.Col() != B.Row() || C.Row() != A.Row() || C.Col() != B.Col() {
 		return ErrMatSize
 	}

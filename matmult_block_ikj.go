@@ -7,7 +7,7 @@ package gomat
 import "sync"
 
 // DotBlockIKJ block matrix multiplication
-func (A *Matrix) DotBlockIKJ(blockSize int, B, C *Matrix) (err error) {
+func (A *Dense) DotBlockIKJ(blockSize int, B, C Matrix) (err error) {
 	if (A.Col() != B.Row()) || (C.Row() != A.Row()) || (C.Col() != B.Col()) {
 		return ErrMatSize
 	}
@@ -70,7 +70,7 @@ func (A *Matrix) DotBlockIKJ(blockSize int, B, C *Matrix) (err error) {
 }
 
 // DotBlockIKJP block matrix multiplication
-func (A *Matrix) DotBlockIKJP(blockSize int, B, C *Matrix) (err error) {
+func (A *Dense) DotBlockIKJP(blockSize int, B, C Matrix) (err error) {
 	if (A.Col() != B.Row()) || (C.Row() != A.Row()) || (C.Col() != B.Col()) {
 		return ErrMatSize
 	}

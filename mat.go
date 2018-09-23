@@ -18,19 +18,20 @@ var (
 	ErrMatSize = errors.New("bad size of matrix")
 )
 
-// Matrix is a M x N matrix
-type Matrix struct {
+// Dense implements Matrix interface
+// dense matrix underlying data struct
+type Dense struct {
 	m, n int
 	data []float64
 }
 
 // Zero matrix
-func Zero(m, n int) *Matrix {
-	return &Matrix{m: m, n: n, data: make([]float64, m*n)}
+func Zero(m, n int) *Dense {
+	return &Dense{m: m, n: n, data: make([]float64, m*n)}
 }
 
 // Rand creates a size by size random matrix
-func Rand(m, n int) *Matrix {
+func Rand(m, n int) *Dense {
 	A := Zero(m, n)
 	for i := 0; i < m; i++ {
 		for j := 0; j < n; j++ {
@@ -41,7 +42,7 @@ func Rand(m, n int) *Matrix {
 }
 
 // RandP creates a size by size random matrix concurrently
-func RandP(m, n int) *Matrix {
+func RandP(m, n int) *Dense {
 	A := Zero(m, n)
 	wg := sync.WaitGroup{}
 	for i := 0; i < m; i++ {
@@ -57,10 +58,10 @@ func RandP(m, n int) *Matrix {
 	return A
 }
 
-// NewP a size by size matrix concurrently
-func NewP(m, n int) func(...float64) (*Matrix, error) {
+// NewDenseP a size by size matrix concurrently
+func NewDenseP(m, n int) func(...float64) (*Dense, error) {
 	A := Zero(m, n)
-	return func(es ...float64) (*Matrix, error) {
+	return func(es ...float64) (*Dense, error) {
 		if len(es) != m*n {
 			return nil, ErrNumElem
 		}
@@ -80,10 +81,10 @@ func NewP(m, n int) func(...float64) (*Matrix, error) {
 	}
 }
 
-// New a size by size matrix
-func New(m, n int) func(...float64) (*Matrix, error) {
+// NewDense a size by size matrix
+func NewDense(m, n int) func(...float64) (*Dense, error) {
 	A := Zero(m, n)
-	return func(es ...float64) (*Matrix, error) {
+	return func(es ...float64) (*Dense, error) {
 		if len(es) != m*n {
 			return nil, ErrNumElem
 		}
@@ -98,7 +99,7 @@ func New(m, n int) func(...float64) (*Matrix, error) {
 }
 
 // Print the matrix
-func (A *Matrix) Print() {
+func (A *Dense) Print() {
 	for i := 0; i < A.m; i++ {
 		for j := 0; j < A.n; j++ {
 			fmt.Printf("%.2f ", A.At(i, j))
@@ -108,47 +109,47 @@ func (A *Matrix) Print() {
 }
 
 // Size of matrix
-func (A *Matrix) Size() (int, int) {
+func (A *Dense) Size() (int, int) {
 	return A.m, A.n
 }
 
 // Row of matrix
-func (A *Matrix) Row() int {
+func (A *Dense) Row() int {
 	return A.m
 }
 
 // Col of matrix
-func (A *Matrix) Col() int {
+func (A *Dense) Col() int {
 	return A.n
 }
 
 // At access element (i, j)
-func (A *Matrix) At(i, j int) float64 {
+func (A *Dense) At(i, j int) float64 {
 	return A.data[i*A.n+j]
 }
 
 // Set set element (i, j) with val
-func (A *Matrix) Set(i, j int, val float64) {
+func (A *Dense) Set(i, j int, val float64) {
 	A.data[i*A.n+j] = val
 }
 
 // Inc adds element (i, j) with wal
-func (A *Matrix) Inc(i, j int, val float64) {
+func (A *Dense) Inc(i, j int, val float64) {
 	A.data[i*A.n+j] += val
 }
 
 // Mult multiple element (i, j) with wal
-func (A *Matrix) Mult(i, j int, val float64) {
+func (A *Dense) Mult(i, j int, val float64) {
 	A.data[i*A.n+j] *= val
 }
 
 // Pow computes power of n of element (i, j)
-func (A *Matrix) Pow(i, j int, n float64) {
+func (A *Dense) Pow(i, j int, n float64) {
 	A.data[i*A.n+j] = math.Pow(A.data[i*A.n+j], n)
 }
 
 // EqualShape check A.Size() == B.Size()
-func (A *Matrix) EqualShape(B *Matrix) bool {
+func (A *Dense) EqualShape(B Matrix) bool {
 	am, an := A.Size()
 	bm, bn := B.Size()
 	if am != bm || an != bn {
@@ -158,7 +159,7 @@ func (A *Matrix) EqualShape(B *Matrix) bool {
 }
 
 // Equal A and B?
-func (A *Matrix) Equal(B *Matrix) bool {
+func (A *Dense) Equal(B Matrix) bool {
 	if !A.EqualShape(B) {
 		return false
 	}
